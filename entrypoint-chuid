@@ -3,7 +3,7 @@
 # NOTE: You cannot change the uid of the running process, so this must happen as root. Use -e USERSPACE=1 instead of --user at docker-compose
 
 set -e
-USERNAME="caddy"
+USERNAME="nginx"
 GROUPNAME=${USERNAME}
 
 # Change uid of the user.
