@@ -1,0 +1,50 @@
+{
+    auto_https off
+}
+
+:80 {
+  encode zstd gzip
+
+  # Pimcore/Symfony public web root
+  root * {$WEB_ROOT:/project/symfony/public}
+
+  # Serve existing files directly
+  @static {
+    file
+  }
+  handle @static {
+    file_server
+  }
+
+  @default {
+    not path /theme/* /media/* /thumbnail/* /bundles/* /css/* /fonts/* /js/* /recovery/* /sitemap/*
+  }
+
+  @svg {
+    file
+    path *.svg
+  }
+
+  header @svg Content-Security-Policy "script-src 'none'"
+
+  # PHP handling via php-fpm in the `php` container
+  php_fastcgi php:9000 {
+      header_up X-Forwarded-Proto https
+  }
+
+  # Basic security headers
+  header {
+    X-Frame-Options "SAMEORIGIN"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+
+  # Access logs
+  log {
+    output stdout
+    format json
+    level info
+  }
+  encode zstd gzip
+}
+
